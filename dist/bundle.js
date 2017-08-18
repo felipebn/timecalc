@@ -79,7 +79,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(0);
 var ReactDOM = __webpack_require__(2);
 var Calculator_1 = __webpack_require__(3);
-ReactDOM.render(React.createElement(Calculator_1.Calculator, { compiler: "TypeScript", framework: "React" }), document.getElementById("example"));
+ReactDOM.render(React.createElement(Calculator_1.Calculator, null), document.getElementById("calculator"));
 
 
 /***/ }),
@@ -106,20 +106,80 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(0);
-// 'HelloProps' describes the shape of props.
-// State is never set so we use the 'undefined' type.
 var Calculator = (function (_super) {
     __extends(Calculator, _super);
-    function Calculator() {
-        return _super !== null && _super.apply(this, arguments) || this;
+    function Calculator(props) {
+        var _this = _super.call(this, props) || this;
+        _this.state = {
+            result: "--:--",
+        };
+        _this.handleTimeInputChange = _this.handleTimeInputChange.bind(_this);
+        return _this;
     }
     Calculator.prototype.render = function () {
-        return React.createElement("h1", null,
-            "Hello from ",
-            this.props.compiler,
-            " and ",
-            this.props.framework,
-            "!");
+        return React.createElement("div", { className: "columns is-multiline" },
+            this.createInputColumn("start", "Start", this.state.start),
+            this.createInputColumn("break", "Break", this.state.break),
+            this.createInputColumn("end", "End", this.state.end),
+            React.createElement("div", { className: "column is-size-1 has-text-centered is-half is-offset-one-quarter" }, this.state.result));
+    };
+    Calculator.prototype.createInputColumn = function (name, label, value) {
+        return React.createElement("div", { className: "column is-one-third" },
+            React.createElement("div", { className: "field" },
+                React.createElement("label", { className: "label has-text-centered" }, label),
+                React.createElement("div", { className: "control" },
+                    React.createElement("input", { className: "input", type: "text", placeholder: "00:00", name: name, value: value, maxLength: 5, onChange: this.handleTimeInputChange }))));
+    };
+    Calculator.prototype.handleTimeInputChange = function (event) {
+        console.log(event.currentTarget.value);
+        if (this.isTimeInputValid(event.currentTarget.value)) {
+            this.updateStateWithNewValue(event);
+        }
+        this.updateStateWithResult();
+    };
+    Calculator.prototype.updateStateWithResult = function () {
+        var _this = this;
+        this.setState(function (prevState) {
+            console.log("prev state:");
+            console.log(prevState);
+            if (_this.canCalculate(prevState)) {
+                var startDate = new Date("2017-06-06 " + prevState.start);
+                var endDate = new Date("2017-06-06 " + prevState.end);
+                startDate.
+                    return;
+                {
+                    result: '99:99';
+                }
+                ;
+            }
+            return {};
+        });
+    };
+    Calculator.prototype.canCalculate = function (state) {
+        return state.start && state.end;
+    };
+    Calculator.prototype.isTimeInputValid = function (value) {
+        var hoursValid = Number(this.getHours(value)) < 24;
+        var minutesValid = value.length < 3 || Number(this.getMinutes(value)) <= 60;
+        console.log("Hours:" + hoursValid);
+        console.log("Minutes:" + minutesValid);
+        return hoursValid && minutesValid;
+    };
+    Calculator.prototype.getHours = function (value) {
+        return value.replace(":", "").substring(0, 2);
+    };
+    Calculator.prototype.getMinutes = function (value) {
+        return value.replace(":", "").substring(2);
+    };
+    Calculator.prototype.updateStateWithNewValue = function (event) {
+        var newState = {};
+        var val = event.currentTarget.value;
+        if (val.length == 3 && val.indexOf(":") < 0) {
+            val = val.substring(0, 2) + ":" + val.substring(2);
+        }
+        newState[event.currentTarget.name] = val;
+        console.log(newState);
+        this.setState(newState);
     };
     return Calculator;
 }(React.Component));

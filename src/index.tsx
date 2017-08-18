@@ -4,6 +4,6 @@ import * as ReactDOM from "react-dom";
 import { Calculator } from "./components/Calculator";
 
 ReactDOM.render(
-    <Calculator compiler="TypeScript" framework="React" />,
-    document.getElementById("example")
+    <Calculator/>,
+    document.getElementById("calculator")
 );
