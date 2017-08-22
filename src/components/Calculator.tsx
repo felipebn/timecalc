@@ -58,22 +58,32 @@ export class Calculator extends React.Component<undefined, CalculatorState> {
 
     updateStateWithResult(){
         this.setState((prevState) => {
-            console.log("prev state:")
-            console.log(prevState);
-            if( this.canCalculate(prevState) ){
-                var startDate = new Date(`2017-06-06 ${prevState.start}`) ;
-                var endDate = new Date(`2017-06-06 ${prevState.end}`) ;
-                startDate.
-                return {
-                    result: '99:99'
-                };
-            }
-            return {};
+            var resultParts = this.calculate(prevState);
+            console.log(resultParts);
+            var hourAndMinute = resultParts.filter((n) => n >= 0).map(this.zeroPad);
+            if( hourAndMinute.length != 2 ) return {result: '--:--'};
+            return {
+                result: `${hourAndMinute[0]}:${hourAndMinute[1]}`
+            };
         })
     }
 
-    canCalculate(state : CalculatorState){
-        return state.start && state.end;
+    calculate(prevState : CalculatorState){
+        console.log("Calculating...");
+        console.log(prevState);
+        var startDate = new Date(`2017-06-06 ${prevState.start}`) ;
+        var endDate = new Date(`2017-06-06 ${prevState.end}`) ;
+        console.log(startDate);
+        console.log(endDate);
+        var deltaMs = endDate.getTime() - startDate.getTime();
+        var deltaSeconds = deltaMs / 1000 / 60;
+        var deltaMinutes = deltaSeconds % 60;
+        var deltaHours = (deltaSeconds - deltaMinutes) / 60;
+        return [deltaHours, deltaMinutes];
+    }
+
+    zeroPad(n : number) : string{
+        return n > 10 ? n.toString() : ("0" + n);
     }
 
     isTimeInputValid(value : string){

@@ -140,23 +140,31 @@ var Calculator = (function (_super) {
     Calculator.prototype.updateStateWithResult = function () {
         var _this = this;
         this.setState(function (prevState) {
-            console.log("prev state:");
-            console.log(prevState);
-            if (_this.canCalculate(prevState)) {
-                var startDate = new Date("2017-06-06 " + prevState.start);
-                var endDate = new Date("2017-06-06 " + prevState.end);
-                startDate.
-                    return;
-                {
-                    result: '99:99';
-                }
-                ;
-            }
-            return {};
+            var resultParts = _this.calculate(prevState);
+            console.log(resultParts);
+            var hourAndMinute = resultParts.filter(function (n) { return n >= 0; }).map(_this.zeroPad);
+            if (hourAndMinute.length != 2)
+                return { result: '--:--' };
+            return {
+                result: hourAndMinute[0] + ":" + hourAndMinute[1]
+            };
         });
     };
-    Calculator.prototype.canCalculate = function (state) {
-        return state.start && state.end;
+    Calculator.prototype.calculate = function (prevState) {
+        console.log("Calculating...");
+        console.log(prevState);
+        var startDate = new Date("2017-06-06 " + prevState.start);
+        var endDate = new Date("2017-06-06 " + prevState.end);
+        console.log(startDate);
+        console.log(endDate);
+        var deltaMs = endDate.getTime() - startDate.getTime();
+        var deltaSeconds = deltaMs / 1000 / 60;
+        var deltaMinutes = deltaSeconds % 60;
+        var deltaHours = (deltaSeconds - deltaMinutes) / 60;
+        return [deltaHours, deltaMinutes];
+    };
+    Calculator.prototype.zeroPad = function (n) {
+        return n > 10 ? n.toString() : ("0" + n);
     };
     Calculator.prototype.isTimeInputValid = function (value) {
         var hoursValid = Number(this.getHours(value)) < 24;

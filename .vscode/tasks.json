@@ -7,6 +7,11 @@
             "taskName": "start local server on 9000",
             "type": "shell",
             "command": "http-server -p 9000"
+        },
+        {
+            "taskName": "webpack watch",
+            "type": "shell",
+            "command": "webpack --watch --display-error-details"
         }
     ]
 }
