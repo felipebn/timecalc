@@ -141,7 +141,7 @@ var Calculator = (function (_super) {
         var _this = this;
         this.setState(function (prevState) {
             var resultParts = _this.calculate(prevState);
-            console.log(resultParts);
+            console.log(prevState);
             var hourAndMinute = resultParts.filter(function (n) { return n >= 0; }).map(_this.zeroPad);
             if (hourAndMinute.length != 2)
                 return { result: '--:--' };
@@ -150,18 +150,25 @@ var Calculator = (function (_super) {
             };
         });
     };
-    Calculator.prototype.calculate = function (prevState) {
-        console.log("Calculating...");
-        console.log(prevState);
-        var startDate = new Date("2017-06-06 " + prevState.start);
-        var endDate = new Date("2017-06-06 " + prevState.end);
-        console.log(startDate);
-        console.log(endDate);
+    Calculator.prototype.calculate = function (state) {
+        var startDate = new Date("2017-06-06 " + state.start);
+        var endDate = new Date("2017-06-06 " + state.end);
         var deltaMs = endDate.getTime() - startDate.getTime();
-        var deltaSeconds = deltaMs / 1000 / 60;
-        var deltaMinutes = deltaSeconds % 60;
-        var deltaHours = (deltaSeconds - deltaMinutes) / 60;
+        var delta = deltaMs / 1000 / 60;
+        delta -= this.calculateBreakInMinutes(state);
+        var deltaMinutes = delta % 60;
+        var deltaHours = (delta - deltaMinutes) / 60;
         return [deltaHours, deltaMinutes];
+    };
+    Calculator.prototype.calculateBreakInMinutes = function (state) {
+        if (state.break) {
+            var hoursAndMinutes = state.break.split(":").map(function (p) { return Number(p); });
+            var totalSeconds = 0;
+            totalSeconds += hoursAndMinutes[0] * 60;
+            totalSeconds += hoursAndMinutes[1];
+            return totalSeconds;
+        }
+        return 0;
     };
     Calculator.prototype.zeroPad = function (n) {
         return n > 10 ? n.toString() : ("0" + n);

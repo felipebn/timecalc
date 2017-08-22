@@ -59,7 +59,7 @@ export class Calculator extends React.Component<undefined, CalculatorState> {
     updateStateWithResult(){
         this.setState((prevState) => {
             var resultParts = this.calculate(prevState);
-            console.log(resultParts);
+            console.log(prevState);
             var hourAndMinute = resultParts.filter((n) => n >= 0).map(this.zeroPad);
             if( hourAndMinute.length != 2 ) return {result: '--:--'};
             return {
@@ -68,18 +68,26 @@ export class Calculator extends React.Component<undefined, CalculatorState> {
         })
     }
 
-    calculate(prevState : CalculatorState){
-        console.log("Calculating...");
-        console.log(prevState);
-        var startDate = new Date(`2017-06-06 ${prevState.start}`) ;
-        var endDate = new Date(`2017-06-06 ${prevState.end}`) ;
-        console.log(startDate);
-        console.log(endDate);
-        var deltaMs = endDate.getTime() - startDate.getTime();
-        var deltaSeconds = deltaMs / 1000 / 60;
-        var deltaMinutes = deltaSeconds % 60;
-        var deltaHours = (deltaSeconds - deltaMinutes) / 60;
+    calculate(state : CalculatorState){
+        let startDate = new Date(`2017-06-06 ${state.start}`) ;
+        let endDate = new Date(`2017-06-06 ${state.end}`) ;
+        let deltaMs = endDate.getTime() - startDate.getTime();
+        var delta = deltaMs / 1000 / 60;
+        delta -= this.calculateBreakInMinutes(state);
+        let deltaMinutes = delta % 60;
+        let deltaHours = (delta - deltaMinutes) / 60;
         return [deltaHours, deltaMinutes];
+    }
+
+    calculateBreakInMinutes(state : CalculatorState) : number{
+        if( state.break ){
+            var hoursAndMinutes = state.break.split(":").map((p) => Number(p));
+            var totalSeconds = 0;
+            totalSeconds += hoursAndMinutes[0] * 60;
+            totalSeconds += hoursAndMinutes[1];
+            return totalSeconds;
+        }
+        return 0;
     }
 
     zeroPad(n : number) : string{
