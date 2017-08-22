@@ -131,7 +131,6 @@ var Calculator = (function (_super) {
                     React.createElement("input", { className: "input", type: "text", placeholder: "00:00", name: name, value: value, maxLength: 5, onChange: this.handleTimeInputChange }))));
     };
     Calculator.prototype.handleTimeInputChange = function (event) {
-        console.log(event.currentTarget.value);
         if (this.isTimeInputValid(event.currentTarget.value)) {
             this.updateStateWithNewValue(event);
         }
@@ -141,7 +140,6 @@ var Calculator = (function (_super) {
         var _this = this;
         this.setState(function (prevState) {
             var resultParts = _this.calculate(prevState);
-            console.log(prevState);
             var hourAndMinute = resultParts.filter(function (n) { return n >= 0; }).map(_this.zeroPad);
             if (hourAndMinute.length != 2)
                 return { result: '--:--' };
@@ -163,9 +161,8 @@ var Calculator = (function (_super) {
     Calculator.prototype.calculateBreakInMinutes = function (state) {
         if (state.break) {
             var hoursAndMinutes = state.break.split(":").map(function (p) { return Number(p); });
-            var totalSeconds = 0;
+            var totalSeconds = hoursAndMinutes[1];
             totalSeconds += hoursAndMinutes[0] * 60;
-            totalSeconds += hoursAndMinutes[1];
             return totalSeconds;
         }
         return 0;
@@ -176,8 +173,6 @@ var Calculator = (function (_super) {
     Calculator.prototype.isTimeInputValid = function (value) {
         var hoursValid = Number(this.getHours(value)) < 24;
         var minutesValid = value.length < 3 || Number(this.getMinutes(value)) <= 60;
-        console.log("Hours:" + hoursValid);
-        console.log("Minutes:" + minutesValid);
         return hoursValid && minutesValid;
     };
     Calculator.prototype.getHours = function (value) {
@@ -193,7 +188,6 @@ var Calculator = (function (_super) {
             val = val.substring(0, 2) + ":" + val.substring(2);
         }
         newState[event.currentTarget.name] = val;
-        console.log(newState);
         this.setState(newState);
     };
     return Calculator;

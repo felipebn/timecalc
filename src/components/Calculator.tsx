@@ -47,8 +47,6 @@ export class Calculator extends React.Component<undefined, CalculatorState> {
     }
 
     handleTimeInputChange(event : React.FormEvent<HTMLInputElement>){
-        console.log(event.currentTarget.value);
-
         if( this.isTimeInputValid(event.currentTarget.value) ){
             this.updateStateWithNewValue(event);
         }
@@ -59,7 +57,6 @@ export class Calculator extends React.Component<undefined, CalculatorState> {
     updateStateWithResult(){
         this.setState((prevState) => {
             var resultParts = this.calculate(prevState);
-            console.log(prevState);
             var hourAndMinute = resultParts.filter((n) => n >= 0).map(this.zeroPad);
             if( hourAndMinute.length != 2 ) return {result: '--:--'};
             return {
@@ -82,9 +79,8 @@ export class Calculator extends React.Component<undefined, CalculatorState> {
     calculateBreakInMinutes(state : CalculatorState) : number{
         if( state.break ){
             var hoursAndMinutes = state.break.split(":").map((p) => Number(p));
-            var totalSeconds = 0;
+            var totalSeconds = hoursAndMinutes[1];
             totalSeconds += hoursAndMinutes[0] * 60;
-            totalSeconds += hoursAndMinutes[1];
             return totalSeconds;
         }
         return 0;
@@ -97,8 +93,6 @@ export class Calculator extends React.Component<undefined, CalculatorState> {
     isTimeInputValid(value : string){
         var hoursValid = Number(this.getHours(value)) < 24;
         var minutesValid = value.length < 3 || Number(this.getMinutes(value)) <= 60;
-        console.log("Hours:" + hoursValid)
-        console.log("Minutes:" + minutesValid)
         return hoursValid && minutesValid;
     }
 
@@ -117,7 +111,6 @@ export class Calculator extends React.Component<undefined, CalculatorState> {
             val = val.substring(0,2) + ":" + val.substring(2);
         }
         newState[event.currentTarget.name] = val;
-        console.log(newState);
         this.setState(newState);
     }
 }
