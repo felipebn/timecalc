@@ -87,7 +87,7 @@ export class Calculator extends React.Component<undefined, CalculatorState> {
     }
 
     zeroPad(n : number) : string{
-        return n > 10 ? n.toString() : ("0" + n);
+        return n >= 10 ? n.toString() : ("0" + n);
     }
 
     isTimeInputValid(value : string){
